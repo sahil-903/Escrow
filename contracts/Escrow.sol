@@ -22,15 +22,15 @@ contract Escrow {
         owner = msg.sender;
     }
 
-    function deposit(address to, uint256 _amountToDeposit) external payable {
-        whitelisted[msg.sender][to] = _amountToDeposit;
+    function deposit(address to) external payable {
+        whitelisted[msg.sender][to] = msg.value;
         depositer[msg.sender] = to;
         transactionHistory[msg.sender].push(
             History({
                 transactionType: 0,
                 from: msg.sender,
                 to: to,
-                amount: _amountToDeposit
+                amount: msg.value
             })
         );
         bool success = payable(address(this)).send(msg.value);
@@ -60,4 +60,6 @@ contract Escrow {
     ) public view returns (History[] memory) {
         return transactionHistory[account];
     }
+
+    receive() external payable {}
 }
